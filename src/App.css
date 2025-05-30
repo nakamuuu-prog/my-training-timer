@@ -1,42 +1,119 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+body {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding-top: 20px;
+}
+
+.my-training-timer {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
+  width: 90%;
+  max-width: 500px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.timer-display h2 {
+  margin-top: 0;
+  font-size: 1.8em;
+  color: #333;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.timer-display .time-remaining {
+  font-size: 4em;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #007bff;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.timer-display .cycle-info {
+  font-size: 1em;
+  color: #555;
+  margin-bottom: 20px;
 }
 
-.card {
-  padding: 2em;
+.controls button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
 }
 
-.read-the-docs {
-  color: #888;
+.controls button:hover {
+  background-color: #0056b3;
+}
+
+.controls button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pattern-list-settings {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.pattern-list-settings h3 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.pattern-form {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.pattern-form h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.pattern-form div {
+  margin-bottom: 8px;
+}
+
+.pattern-form label {
+  display: inline-block;
+  width: 80px;
+  margin-right: 10px;
+}
+
+.pattern-form input[type="number"] {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.pattern-form button,
+.pattern-list-settings > button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+.pattern-form button {
+  background-color: #dc3545;
+}
+
+.pattern-form button:hover,
+.pattern-list-settings > button:hover {
+  opacity: 0.9;
 }
