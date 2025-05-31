@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import './App.css';
 import { TimerPattern, TimerMode, AudioFiles } from './types';
 import PatternList from './components/PatternList';
 import TimerDisplay from './components/TimerDisplay';
@@ -67,9 +68,14 @@ const App: React.FC = () => {
       // 時間切れの処理
       if (timerMode === 'work') {
         sounds.workEnd?.play();
+        setTimerMode('rest');
+        setCurrentTime(activePattern.restTime);
+      } else if (timerMode === 'rest') {
+        sounds.restEnd?.play();
         if (currentCycle < activePattern.cycles) {
-          setTimerMode('rest');
-          setCurrentTime(activePattern.restTime);
+          setCurrentCycle((prev) => prev + 1);
+          setTimerMode('work');
+          setCurrentTime(activePattern.workTime);
         } else if (currentPatternIndex < patterns.length - 1) {
           // 次のパターンへ
           const nextPatternIndex = currentPatternIndex + 1;
@@ -82,11 +88,6 @@ const App: React.FC = () => {
           setTimerMode('finished');
           setIsRunning(false);
         }
-      } else if (timerMode === 'rest') {
-        sounds.restEnd?.play();
-        setCurrentCycle((prev) => prev + 1);
-        setTimerMode('work');
-        setCurrentTime(activePattern.workTime);
       }
     }
 
