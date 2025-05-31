@@ -5,7 +5,7 @@ export interface TimerPattern {
   cycles: number;
 }
 
-export type TimerMode = "work" | "rest" | "idle" | "finished";
+export type TimerMode = 'work' | 'rest' | 'idle' | 'finished';
 
 export interface AudioFiles {
   workWhistle: string;

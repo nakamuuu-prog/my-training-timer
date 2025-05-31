@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { TimerPattern, TimerMode, AudioFiles } from "./types";
-import PatternList from "./components/PatternList";
-import TimerDisplay from "./components/TimerDisplay";
-import Controls from "./components/Controls";
-import { loadSettingsFromURL, saveSettingsToURL } from "./utils/urlParams"; // 後述
+import React, { useState, useEffect, useCallback } from 'react';
+import { TimerPattern, TimerMode, AudioFiles } from './types';
+import PatternList from './components/PatternList';
+import TimerDisplay from './components/TimerDisplay';
+import Controls from './components/Controls';
+import { loadSettingsFromURL, saveSettingsToURL } from './utils/urlParams'; // 後述
 
 const defaultAudioFiles: AudioFiles = {
-  workWhistle: "/audio/work_whistle_placeholder.mp3",
-  restWhistle: "/audio/rest_whistle_placeholder.mp3",
-  halfBeep: "/audio/half_beep_placeholder.mp3",
-  beep: "/audio/beep_placeholder.mp3",
+  workWhistle: '/audio/work_whistle_placeholder.mp3',
+  restWhistle: '/audio/rest_whistle_placeholder.mp3',
+  halfBeep: '/audio/half_beep_placeholder.mp3',
+  beep: '/audio/beep_placeholder.mp3',
 };
 
 const App: React.FC = () => {
@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const [currentPatternIndex, setCurrentPatternIndex] = useState<number>(0);
   const [currentCycle, setCurrentCycle] = useState<number>(1);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [timerMode, setTimerMode] = useState<TimerMode>("idle");
+  const [timerMode, setTimerMode] = useState<TimerMode>('idle');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [audioFiles] = useState<AudioFiles>(defaultAudioFiles);
 
@@ -47,7 +47,7 @@ const App: React.FC = () => {
     const firstPattern = patterns[0];
     setCurrentPatternIndex(0);
     setCurrentCycle(1);
-    setTimerMode("work");
+    setTimerMode('work');
     setCurrentTime(firstPattern.workTime);
     setIsRunning(false);
   }, [patterns]);
@@ -65,27 +65,27 @@ const App: React.FC = () => {
       }, 1000);
     } else if (isRunning && currentTime === 0 && activePattern) {
       // 時間切れの処理
-      if (timerMode === "work") {
+      if (timerMode === 'work') {
         sounds.workEnd?.play();
         if (currentCycle < activePattern.cycles) {
-          setTimerMode("rest");
+          setTimerMode('rest');
           setCurrentTime(activePattern.restTime);
         } else if (currentPatternIndex < patterns.length - 1) {
           // 次のパターンへ
           const nextPatternIndex = currentPatternIndex + 1;
           setCurrentPatternIndex(nextPatternIndex);
           setCurrentCycle(1);
-          setTimerMode("work");
+          setTimerMode('work');
           setCurrentTime(patterns[nextPatternIndex].workTime);
         } else {
           // 全パターン終了
-          setTimerMode("finished");
+          setTimerMode('finished');
           setIsRunning(false);
         }
-      } else if (timerMode === "rest") {
+      } else if (timerMode === 'rest') {
         sounds.restEnd?.play();
         setCurrentCycle((prev) => prev + 1);
-        setTimerMode("work");
+        setTimerMode('work');
         setCurrentTime(activePattern.workTime);
       }
     }
@@ -93,7 +93,7 @@ const App: React.FC = () => {
     // 音声通知ロジック (残り半分、残り5秒)
     if (isRunning && activePattern) {
       if (
-        timerMode === "work" &&
+        timerMode === 'work' &&
         currentTime === Math.ceil(activePattern.workTime / 2)
       ) {
         sounds.halfBeep?.play();
@@ -120,12 +120,12 @@ const App: React.FC = () => {
   ]);
 
   const handleStartPause = () => {
-    if (timerMode === "finished" || patterns.length === 0) return;
-    if (timerMode === "idle" && patterns.length > 0) {
+    if (timerMode === 'finished' || patterns.length === 0) return;
+    if (timerMode === 'idle' && patterns.length > 0) {
       const firstPattern = patterns[0];
       setCurrentPatternIndex(0);
       setCurrentCycle(1);
-      setTimerMode("work");
+      setTimerMode('work');
       setCurrentTime(firstPattern.workTime);
       setIsRunning(true);
       return;
@@ -166,7 +166,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="my-training-timer">
+    <div className='my-training-timer'>
       <h1>My Training Timer</h1>
       <TimerDisplay
         mode={timerMode}

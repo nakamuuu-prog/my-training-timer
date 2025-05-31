@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { TimerPattern } from "../types";
+import React, { useState, useEffect } from 'react';
+import { TimerPattern } from '../types';
 
 interface PatternFormProps {
   pattern: TimerPattern;
@@ -29,14 +29,14 @@ const PatternForm: React.FC<PatternFormProps> = ({
   };
 
   return (
-    <div className="pattern-form">
+    <div className='pattern-form'>
       <h4>パターン {index + 1}</h4>
       <div>
         <label>開始(秒): </label>
         <input
-          type="number"
+          type='number'
           value={workTime}
-          min="1"
+          min='1'
           onChange={(e) =>
             setWorkTime(Math.max(1, parseInt(e.target.value, 10)) || 1)
           }
@@ -46,9 +46,9 @@ const PatternForm: React.FC<PatternFormProps> = ({
       <div>
         <label>休憩(秒): </label>
         <input
-          type="number"
+          type='number'
           value={restTime}
-          min="1"
+          min='1'
           onChange={(e) =>
             setRestTime(Math.max(1, parseInt(e.target.value, 10)) || 1)
           }
@@ -58,9 +58,9 @@ const PatternForm: React.FC<PatternFormProps> = ({
       <div>
         <label>サイクル数: </label>
         <input
-          type="number"
+          type='number'
           value={cycles}
-          min="1"
+          min='1'
           onChange={(e) =>
             setCycles(Math.max(1, parseInt(e.target.value, 10)) || 1)
           }

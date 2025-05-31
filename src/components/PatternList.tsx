@@ -1,6 +1,6 @@
-import React from "react";
-import { TimerPattern } from "../types";
-import PatternForm from "./PatternForm";
+import React from 'react';
+import { TimerPattern } from '../types';
+import PatternForm from './PatternForm';
 
 interface PatternListProps {
   patterns: TimerPattern[];
@@ -18,7 +18,7 @@ const PatternList: React.FC<PatternListProps> = ({
   maxPatterns,
 }) => {
   return (
-    <div className="pattern-list-settings">
+    <div className='pattern-list-settings'>
       <h3>タイマーパターン設定</h3>
       {patterns.map((p, index) => (
         <PatternForm
