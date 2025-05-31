@@ -27,19 +27,34 @@ const TimerDisplay: React.FC<TimerDisplayProps> = ({
   totalPatterns,
 }) => {
   let displayText = '準備完了';
-  if (mode === 'work') displayText = '集中 💪';
-  if (mode === 'rest') displayText = '休憩 😮‍💨';
-  if (mode === 'finished') displayText = '完了 🎉';
+  let modeClass = 'idle';
+  if (mode === 'work') {
+    displayText = '集中 💪';
+    modeClass = 'work';
+  }
+  if (mode === 'rest') {
+    displayText = '休憩 😮‍💨';
+    modeClass = 'rest';
+  }
+  if (mode === 'finished') {
+    displayText = '完了 🎉';
+    modeClass = 'finished';
+  }
 
   return (
-    <div className='timer-display'>
-      <h2>{displayText}</h2>
-      <div className='time-remaining'>{formatTime(currentTime)}</div>
+    <div className={`timer-display rich-timer-display ${modeClass}`}>
+      <h2 className='timer-mode-label'>{displayText}</h2>
+      <div className='time-remaining digital-font'>
+        {formatTime(currentTime)}
+      </div>
       {mode !== 'idle' && mode !== 'finished' && totalPatterns > 0 && (
-        <div className='cycle-info'>
-          パターン: {currentPatternIndex} / {totalPatterns}
-          <br />
-          サイクル: {currentCycle} / {totalCycles}
+        <div className='cycle-info-card'>
+          <div className='pattern-info'>
+            パターン: <span>{currentPatternIndex}</span> / {totalPatterns}
+          </div>
+          <div className='cycle-info'>
+            サイクル: <span>{currentCycle}</span> / {totalCycles}
+          </div>
         </div>
       )}
     </div>
