@@ -45,7 +45,7 @@ const TimerDisplay: React.FC<TimerDisplayProps> = ({
     <div className={`timer-display rich-timer-display ${modeClass}`}>
       <h2 className='timer-mode-label'>{displayText}</h2>
       <div className='time-remaining digital-font'>
-        {formatTime(currentTime)}
+        {formatTime(totalPatterns === 0 ? 0 : currentTime)}
       </div>
       {mode !== 'idle' && mode !== 'finished' && totalPatterns > 0 && (
         <div className='cycle-info-card'>
