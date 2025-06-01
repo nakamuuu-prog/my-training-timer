@@ -18,19 +18,23 @@ const PatternList: React.FC<PatternListProps> = ({
   maxPatterns,
 }) => {
   return (
-    <div className='pattern-list-settings'>
+    <div>
       <h3>タイマーパターン設定</h3>
-      {patterns.map((p, index) => (
-        <PatternForm
-          key={p.id}
-          pattern={p}
-          onUpdatePattern={onUpdatePattern}
-          onRemovePattern={onRemovePattern}
-          index={index}
-        />
-      ))}
+      <div className='pattern-form-container'>
+        {patterns.map((p, index) => (
+          <PatternForm
+            key={p.id}
+            pattern={p}
+            onUpdatePattern={onUpdatePattern}
+            onRemovePattern={onRemovePattern}
+            index={index}
+          />
+        ))}
+      </div>
       {patterns.length < maxPatterns && (
-        <button onClick={onAddPattern}>パターンを追加 (+)</button>
+        <div className='pattern-list-settings'>
+          <button onClick={onAddPattern}>パターンを追加 (+)</button>
+        </div>
       )}
       {patterns.length === 0 && <p>タイマーパターンを追加してください。</p>}
     </div>

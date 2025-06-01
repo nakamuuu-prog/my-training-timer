@@ -3,15 +3,11 @@ body {
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
-  background-color: #f0f0f0;
   margin: 0;
 }
 
 .my-training-timer {
-  background-color: white;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -65,12 +61,19 @@ body {
 }
 
 /* PatternForm レイアウト調整 */
+.pattern-form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2em;
+  justify-content: center;
+  align-items: stretch;
+}
+
 .pattern-form {
   background: #fff;
   border-radius: 1.2em;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   padding: 1.5em 1.5em 1.2em 1.5em;
-  margin: 1.2em auto 2em auto;
   max-width: 340px;
   text-align: center;
   display: flex;
@@ -116,6 +119,11 @@ body {
 }
 .pattern-form button:hover {
   background: #e53935;
+}
+
+.pattern-list-settings {
+  margin: 1.2em auto 2em auto;
+  max-width: 340px;
 }
 
 .pattern-list-settings > button {
@@ -218,5 +226,12 @@ body {
   .pattern-form input[type='number'] {
     width: 60px;
     font-size: 0.95em;
+  }
+}
+@media (max-width: 900px) {
+  .pattern-form-container {
+    flex-direction: column;
+    gap: 0.5em;
+    align-items: center;
   }
 }
