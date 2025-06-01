@@ -4,7 +4,7 @@ import { TimerPattern } from '../types';
 interface PatternFormProps {
   pattern: TimerPattern;
   onUpdatePattern: (pattern: TimerPattern) => void;
-  onRemovePattern: (id: string) => void;
+  onRemovePattern: (pattern: number) => void;
   index: number;
 }
 
@@ -16,16 +16,16 @@ const PatternForm: React.FC<PatternFormProps> = ({
 }) => {
   const [workTime, setWorkTime] = useState<number>(pattern.workTime);
   const [restTime, setRestTime] = useState<number>(pattern.restTime);
-  const [cycles, setCycles] = useState<number>(pattern.cycles);
+  const [sets, setSets] = useState<number>(pattern.sets);
 
   useEffect(() => {
     setWorkTime(pattern.workTime);
     setRestTime(pattern.restTime);
-    setCycles(pattern.cycles);
+    setSets(pattern.sets);
   }, [pattern]);
 
   const handleUpdate = () => {
-    onUpdatePattern({ ...pattern, workTime, restTime, cycles });
+    onUpdatePattern({ ...pattern, workTime, restTime, sets });
   };
 
   return (
@@ -56,18 +56,18 @@ const PatternForm: React.FC<PatternFormProps> = ({
         />
       </div>
       <div>
-        <label>サイクル数: </label>
+        <label>セット数: </label>
         <input
           type='number'
-          value={cycles}
+          value={sets}
           min='1'
           onChange={(e) =>
-            setCycles(Math.max(1, parseInt(e.target.value, 10)) || 1)
+            setSets(Math.max(1, parseInt(e.target.value, 10)) || 1)
           }
           onBlur={handleUpdate}
         />
       </div>
-      <button onClick={() => onRemovePattern(pattern.id)}>
+      <button onClick={() => onRemovePattern(pattern.pattern)}>
         このパターンを削除
       </button>
     </div>

@@ -1,17 +1,22 @@
 import { TimerPattern } from '../types';
 
-const SETTINGS_PARAM_KEY = 'settings';
-
 export const saveSettingsToURL = (patterns: TimerPattern[]): void => {
   if (patterns.length === 0) {
     const url = new URL(window.location.href);
-    url.searchParams.delete(SETTINGS_PARAM_KEY);
+    // 旧パラメータを全て削除
+    url.search = '';
     window.history.replaceState({}, '', url.toString());
     return;
   }
   try {
-    const serializedSettings = encodeURIComponent(JSON.stringify(patterns));
-    const newUrl = `${window.location.pathname}?${SETTINGS_PARAM_KEY}=${serializedSettings}`;
+    const params = new URLSearchParams();
+    patterns.forEach((patternObj) => {
+      params.append('pattern', patternObj.pattern.toString());
+      params.append('workTime', patternObj.workTime.toString());
+      params.append('restTime', patternObj.restTime.toString());
+      params.append('sets', patternObj.sets.toString());
+    });
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, '', newUrl);
   } catch (error) {
     console.error('Error saving settings to URL:', error);
@@ -20,30 +25,39 @@ export const saveSettingsToURL = (patterns: TimerPattern[]): void => {
 
 export const loadSettingsFromURL = (): TimerPattern[] => {
   const params = new URLSearchParams(window.location.search);
-  const serializedSettings = params.get(SETTINGS_PARAM_KEY);
+  const patternList = params.getAll('pattern');
+  const workTimeList = params.getAll('workTime');
+  const restTimeList = params.getAll('restTime');
+  const setsList = params.getAll('sets');
 
-  if (serializedSettings) {
-    try {
-      const decodedSettings = decodeURIComponent(serializedSettings);
-      const parsedSettings = JSON.parse(decodedSettings) as TimerPattern[];
-      if (
-        Array.isArray(parsedSettings) &&
-        parsedSettings.every(
-          (p) =>
-            typeof p.id === 'string' &&
-            typeof p.workTime === 'number' &&
-            p.workTime > 0 &&
-            typeof p.restTime === 'number' &&
-            p.restTime > 0 &&
-            typeof p.cycles === 'number' &&
-            p.cycles > 0
-        )
-      ) {
-        return parsedSettings;
-      }
-    } catch (error) {
-      console.error('Error loading settings from URL:', error);
+  const length = Math.min(
+    patternList.length,
+    workTimeList.length,
+    restTimeList.length,
+    setsList.length
+  );
+  const patterns: TimerPattern[] = [];
+  for (let i = 0; i < length; i++) {
+    const pattern = Number(patternList[i]);
+    const workTime = Number(workTimeList[i]);
+    const restTime = Number(restTimeList[i]);
+    const sets = Number(setsList[i]);
+    if (
+      !isNaN(pattern) &&
+      !isNaN(workTime) &&
+      workTime > 0 &&
+      !isNaN(restTime) &&
+      restTime > 0 &&
+      !isNaN(sets) &&
+      sets > 0
+    ) {
+      patterns.push({
+        pattern,
+        workTime,
+        restTime,
+        sets,
+      });
     }
   }
-  return [];
+  return patterns;
 };

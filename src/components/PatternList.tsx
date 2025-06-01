@@ -5,7 +5,7 @@ import PatternForm from './PatternForm';
 interface PatternListProps {
   patterns: TimerPattern[];
   onAddPattern: () => void;
-  onRemovePattern: (id: string) => void;
+  onRemovePattern: (pattern: number) => void;
   onUpdatePattern: (pattern: TimerPattern) => void;
   maxPatterns: number;
 }
@@ -23,7 +23,7 @@ const PatternList: React.FC<PatternListProps> = ({
       <div className='pattern-form-container'>
         {patterns.map((p, index) => (
           <PatternForm
-            key={p.id}
+            key={p.pattern}
             pattern={p}
             onUpdatePattern={onUpdatePattern}
             onRemovePattern={onRemovePattern}

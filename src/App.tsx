@@ -18,7 +18,7 @@ const App: React.FC = () => {
     const savedPatterns = loadSettingsFromURL();
     return savedPatterns.length > 0
       ? savedPatterns
-      : [{ id: crypto.randomUUID(), workTime: 30, restTime: 30, cycles: 4 }];
+      : [{ pattern: 1, workTime: 30, restTime: 30, sets: 6 }];
   });
   const [currentPatternIndex, setCurrentPatternIndex] = useState<number>(0);
   const [currentCycle, setCurrentCycle] = useState<number>(1);
@@ -72,7 +72,7 @@ const App: React.FC = () => {
         setCurrentTime(activePattern.restTime);
       } else if (timerMode === 'rest') {
         sounds.restEnd?.play();
-        if (currentCycle < activePattern.cycles) {
+        if (currentCycle < activePattern.sets) {
           setCurrentCycle((prev) => prev + 1);
           setTimerMode('work');
           setCurrentTime(activePattern.workTime);
@@ -147,22 +147,27 @@ const App: React.FC = () => {
   const addPattern = () => {
     if (patterns.length < 5) {
       const newPattern: TimerPattern = {
-        id: crypto.randomUUID(),
-        workTime: 20,
-        restTime: 10,
-        cycles: 3,
+        pattern:
+          patterns.length > 0
+            ? Math.max(...patterns.map((p) => p.pattern)) + 1
+            : 1,
+        workTime: 30,
+        restTime: 30,
+        sets: 6,
       };
       handlePatternsChange([...patterns, newPattern]);
     }
   };
 
-  const removePattern = (id: string) => {
-    handlePatternsChange(patterns.filter((p) => p.id !== id));
+  const removePattern = (pattern: number) => {
+    handlePatternsChange(patterns.filter((p) => p.pattern !== pattern));
   };
 
   const updatePattern = (updatedPattern: TimerPattern) => {
     handlePatternsChange(
-      patterns.map((p) => (p.id === updatedPattern.id ? updatedPattern : p))
+      patterns.map((p) =>
+        p.pattern === updatedPattern.pattern ? updatedPattern : p
+      )
     );
   };
 
@@ -172,8 +177,8 @@ const App: React.FC = () => {
       <TimerDisplay
         mode={timerMode}
         currentTime={currentTime}
-        currentCycle={activePattern ? currentCycle : 0}
-        totalCycles={activePattern ? activePattern.cycles : 0}
+        currentSet={activePattern ? currentCycle : 0}
+        totalSets={activePattern ? activePattern.sets : 0}
         currentPatternIndex={activePattern ? currentPatternIndex + 1 : 0}
         totalPatterns={patterns.length}
       />

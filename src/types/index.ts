@@ -1,8 +1,8 @@
 export interface TimerPattern {
-  id: string;
+  pattern: number;
   workTime: number;
   restTime: number;
-  cycles: number;
+  sets: number;
 }
 
 export type TimerMode = 'work' | 'rest' | 'idle' | 'finished';

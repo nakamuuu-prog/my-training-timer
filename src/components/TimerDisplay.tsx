@@ -4,8 +4,8 @@ import { TimerMode } from '../types';
 interface TimerDisplayProps {
   mode: TimerMode;
   currentTime: number;
-  currentCycle: number;
-  totalCycles: number;
+  currentSet: number;
+  totalSets: number;
   currentPatternIndex: number;
   totalPatterns: number;
 }
@@ -21,8 +21,8 @@ const formatTime = (time: number): string => {
 const TimerDisplay: React.FC<TimerDisplayProps> = ({
   mode,
   currentTime,
-  currentCycle,
-  totalCycles,
+  currentSet,
+  totalSets,
   currentPatternIndex,
   totalPatterns,
 }) => {
@@ -53,7 +53,7 @@ const TimerDisplay: React.FC<TimerDisplayProps> = ({
             パターン: <span>{currentPatternIndex}</span> / {totalPatterns}
           </div>
           <div className='cycle-info'>
-            サイクル: <span>{currentCycle}</span> / {totalCycles}
+            セット: <span>{currentSet}</span> / {totalSets}
           </div>
         </div>
       )}
