@@ -79,8 +79,17 @@ const App: React.FC = () => {
         setCurrentTime(firstPattern.workTime);
       } else if (timerMode === 'work') {
         sounds.workEnd?.play();
-        setTimerMode('rest');
-        setCurrentTime(activePattern.restTime);
+        // 最後のパターンかつ最後のセットであれば、休憩に入らずに終了
+        if (
+          currentPatternIndex === patterns.length - 1 &&
+          currentCycle === activePattern.sets
+        ) {
+          setTimerMode('finished');
+          setIsRunning(false);
+        } else {
+          setTimerMode('rest');
+          setCurrentTime(activePattern.restTime);
+        }
       } else if (timerMode === 'rest') {
         sounds.restEnd?.play();
         if (currentCycle < activePattern.sets) {
