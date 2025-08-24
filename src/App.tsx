@@ -120,6 +120,7 @@ const App: React.FC = () => {
           currentTime >= 1 &&
           currentTime <= 5)
       ) {
+        // 一度だけのインスタンス生成では1秒ごとに音が鳴らないため、都度生成する
         const shortBeep = new Audio(audioFiles.beep);
         shortBeep.play();
       }
