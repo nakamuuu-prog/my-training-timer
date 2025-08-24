@@ -30,14 +30,12 @@ const App: React.FC = () => {
   const [sounds, setSounds] = useState<{
     workEnd?: HTMLAudioElement;
     restEnd?: HTMLAudioElement;
-    halfBeep?: HTMLAudioElement;
   }>({});
 
   useEffect(() => {
     setSounds({
       workEnd: new Audio(audioFiles.workWhistle),
       restEnd: new Audio(audioFiles.restWhistle),
-      halfBeep: new Audio(audioFiles.halfBeep),
     });
   }, [audioFiles]);
 
@@ -109,6 +107,8 @@ const App: React.FC = () => {
         activePattern &&
         currentTime === Math.ceil(activePattern.workTime / 2)
       ) {
+        // デプロイ環境だと実施中の5秒前カウントダウンの最初の音が4秒前に鳴る
+        // 半分の音も都度インスタンス生成されるようにすることで改善
         const halfBeep = new Audio(audioFiles.halfBeep);
         halfBeep.play();
       }
