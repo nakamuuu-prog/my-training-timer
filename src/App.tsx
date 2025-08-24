@@ -109,7 +109,8 @@ const App: React.FC = () => {
         activePattern &&
         currentTime === Math.ceil(activePattern.workTime / 2)
       ) {
-        sounds.halfBeep?.play();
+        const halfBeep = new Audio(audioFiles.halfBeep);
+        halfBeep.play();
       }
 
       // カウントダウン音(3,2,1)と終了前ビープ音(5,4,3,2,1)
