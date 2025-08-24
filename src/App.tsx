@@ -44,12 +44,18 @@ const App: React.FC = () => {
   const activePattern = patterns[currentPatternIndex];
 
   const initializeTimer = useCallback(() => {
-    if (patterns.length === 0) return;
-    const firstPattern = patterns[0];
+    if (patterns.length === 0) {
+      setTimerMode('idle');
+      setCurrentTime(0);
+      setCurrentCycle(1);
+      setCurrentPatternIndex(0);
+      setIsRunning(false);
+      return;
+    }
     setCurrentPatternIndex(0);
     setCurrentCycle(1);
-    setTimerMode('work');
-    setCurrentTime(firstPattern.workTime);
+    setTimerMode('idle');
+    setCurrentTime(0);
     setIsRunning(false);
   }, [patterns]);
 
@@ -60,13 +66,20 @@ const App: React.FC = () => {
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
-    if (isRunning && currentTime > 0 && activePattern) {
+    if (isRunning && currentTime > 0) {
       intervalId = setInterval(() => {
         setCurrentTime((prevTime) => prevTime - 1);
       }, 1000);
-    } else if (isRunning && currentTime === 0 && activePattern) {
-      // 時間切れの処理
-      if (timerMode === 'work') {
+    } else if (isRunning && currentTime === 0) {
+      // 時間切れ or カウントダウン終了
+      if (timerMode === 'countdown') {
+        sounds.workEnd?.play(); // 開始のホイッスル
+        const firstPattern = patterns[0];
+        setCurrentPatternIndex(0);
+        setCurrentCycle(1);
+        setTimerMode('work');
+        setCurrentTime(firstPattern.workTime);
+      } else if (timerMode === 'work') {
         sounds.workEnd?.play();
         setTimerMode('rest');
         setCurrentTime(activePattern.restTime);
@@ -77,32 +90,38 @@ const App: React.FC = () => {
           setTimerMode('work');
           setCurrentTime(activePattern.workTime);
         } else if (currentPatternIndex < patterns.length - 1) {
-          // 次のパターンへ
           const nextPatternIndex = currentPatternIndex + 1;
           setCurrentPatternIndex(nextPatternIndex);
           setCurrentCycle(1);
           setTimerMode('work');
           setCurrentTime(patterns[nextPatternIndex].workTime);
         } else {
-          // 全パターン終了
           setTimerMode('finished');
           setIsRunning(false);
         }
       }
     }
 
-    // 音声通知ロジック (残り半分、残り5秒)
-    if (isRunning && activePattern) {
+    // 音声通知ロジック
+    if (isRunning) {
       if (
         timerMode === 'work' &&
+        activePattern &&
         currentTime === Math.ceil(activePattern.workTime / 2)
       ) {
         sounds.halfBeep?.play();
       }
-      if (currentTime <= 5 && currentTime > 0) {
-        // 1秒間隔だと次のビープ音がなるまでにビープ音が鳴り止まず、次のビープ音が鳴らないので都度初期化してビープ音を鳴らす
+
+      // カウントダウン音(3,2,1)と終了前ビープ音(5,4,3,2,1)
+      if (
+        (timerMode === 'countdown' && currentTime >= 1 && currentTime <= 3) ||
+        (timerMode !== 'countdown' &&
+          timerMode !== 'idle' &&
+          currentTime >= 1 &&
+          currentTime <= 5)
+      ) {
         const shortBeep = new Audio(audioFiles.beep);
-        shortBeep?.play();
+        shortBeep.play();
       }
     }
 
@@ -118,16 +137,14 @@ const App: React.FC = () => {
     currentCycle,
     activePattern,
     sounds,
+    audioFiles.beep,
   ]);
 
   const handleStartPause = () => {
     if (timerMode === 'finished' || patterns.length === 0) return;
     if (timerMode === 'idle' && patterns.length > 0) {
-      const firstPattern = patterns[0];
-      setCurrentPatternIndex(0);
-      setCurrentCycle(1);
-      setTimerMode('work');
-      setCurrentTime(firstPattern.workTime);
+      setTimerMode('countdown');
+      setCurrentTime(5);
       setIsRunning(true);
       return;
     }
