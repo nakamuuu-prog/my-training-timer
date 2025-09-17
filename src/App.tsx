@@ -30,12 +30,16 @@ const App: React.FC = () => {
   const [sounds, setSounds] = useState<{
     workEnd?: HTMLAudioElement;
     restEnd?: HTMLAudioElement;
+    halfBeep?: HTMLAudioElement;
+    beep?: HTMLAudioElement;
   }>({});
 
   useEffect(() => {
     setSounds({
       workEnd: new Audio(audioFiles.workWhistle),
       restEnd: new Audio(audioFiles.restWhistle),
+      halfBeep: new Audio(audioFiles.halfBeep),
+      beep: new Audio(audioFiles.beep),
     });
   }, [audioFiles]);
 
@@ -116,10 +120,10 @@ const App: React.FC = () => {
         activePattern &&
         currentTime === Math.ceil(activePattern.workTime / 2)
       ) {
-        // デプロイ環境だと実施中の5秒前カウントダウンの最初の音が4秒前に鳴る
-        // 半分の音も都度インスタンス生成されるようにすることで改善
-        const halfBeep = new Audio(audioFiles.halfBeep);
-        halfBeep.play();
+        if (sounds.halfBeep) {
+          sounds.halfBeep.currentTime = 0;
+          sounds.halfBeep.play();
+        }
       }
 
       // カウントダウン音(3,2,1)と終了前ビープ音(5,4,3,2,1)
@@ -130,9 +134,10 @@ const App: React.FC = () => {
           currentTime >= 1 &&
           currentTime <= 5)
       ) {
-        // 一度だけのインスタンス生成では1秒ごとに音が鳴らないため、都度生成する
-        const shortBeep = new Audio(audioFiles.beep);
-        shortBeep.play();
+        if (sounds.beep) {
+          sounds.beep.currentTime = 0;
+          sounds.beep.play();
+        }
       }
     }
 
@@ -148,7 +153,6 @@ const App: React.FC = () => {
     currentCycle,
     activePattern,
     sounds,
-    audioFiles.beep,
   ]);
 
   const handleStartPause = () => {
