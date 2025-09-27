@@ -8,9 +8,10 @@ const defaultAudioFiles: AudioFiles = {
   beep: '/audio/beep_placeholder.mp3',
 };
 
-export const useAudio = (volume: number = 1.5) => {
+export const useAudio = (initialVolume: number = 1.0) => {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [gainNode, setGainNode] = useState<GainNode | null>(null);
+  const [volume, setVolume] = useState(initialVolume);
   const [audioBuffers, setAudioBuffers] = useState<
     Record<keyof AudioFiles, AudioBuffer | null>
   >({
@@ -19,6 +20,12 @@ export const useAudio = (volume: number = 1.5) => {
     halfBeep: null,
     beep: null,
   });
+
+  useEffect(() => {
+    if (gainNode) {
+      gainNode.gain.value = volume;
+    }
+  }, [volume, gainNode]);
 
   const initAudio = useCallback(() => {
     if (!audioContext) {
@@ -76,5 +83,5 @@ export const useAudio = (volume: number = 1.5) => {
     [audioContext, gainNode, audioBuffers]
   );
 
-  return { initAudio, playSound };
+  return { initAudio, playSound, volume, setVolume };
 };

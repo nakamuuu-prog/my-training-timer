@@ -9,7 +9,7 @@ import { useTimer } from './hooks/useTimer';
 
 const App: React.FC = () => {
   const { patterns, addPattern, removePattern, updatePattern } = usePatterns();
-  const { initAudio, playSound } = useAudio(1.5);
+  const { initAudio, playSound, volume, setVolume } = useAudio(1.0);
   const {
     currentTime,
     timerMode,
@@ -37,6 +37,8 @@ const App: React.FC = () => {
         onStartPause={handleStartPause}
         onReset={handleReset}
         canStart={patterns.length > 0}
+        volume={volume}
+        onVolumeChange={setVolume}
       />
       <PatternList
         patterns={patterns}
