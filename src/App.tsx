@@ -27,21 +27,48 @@ const App: React.FC = () => {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [audioFiles] = useState<AudioFiles>(defaultAudioFiles);
 
-  const [sounds, setSounds] = useState<{
-    workEnd?: HTMLAudioElement;
-    restEnd?: HTMLAudioElement;
-    halfBeep?: HTMLAudioElement;
-    beep?: HTMLAudioElement;
-  }>({});
+  // Web Audio API states
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [gainNode, setGainNode] = useState<GainNode | null>(null);
+  const [audioBuffers, setAudioBuffers] = useState<
+    Record<keyof AudioFiles, AudioBuffer | null>
+  >({
+    workWhistle: null,
+    restWhistle: null,
+    halfBeep: null,
+    beep: null,
+  });
 
   useEffect(() => {
-    setSounds({
-      workEnd: new Audio(audioFiles.workWhistle),
-      restEnd: new Audio(audioFiles.restWhistle),
-      halfBeep: new Audio(audioFiles.halfBeep),
-      beep: new Audio(audioFiles.beep),
-    });
-  }, [audioFiles]);
+    if (!audioContext) return;
+
+    const loadAudioData = async () => {
+      const newBuffers = { ...audioBuffers };
+      let needsUpdate = false;
+      for (const key in audioFiles) {
+        const typedKey = key as keyof AudioFiles;
+        if (!newBuffers[typedKey]) {
+          try {
+            const response = await fetch(audioFiles[typedKey]);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            newBuffers[typedKey] = audioBuffer;
+            needsUpdate = true;
+          } catch (error) {
+            console.error(
+              `Error loading audio file: ${audioFiles[typedKey]}`,
+              error
+            );
+          }
+        }
+      }
+      if (needsUpdate) {
+        setAudioBuffers(newBuffers);
+      }
+    };
+
+    loadAudioData();
+  }, [audioContext, audioFiles]);
 
   const activePattern = patterns[currentPatternIndex];
 
@@ -65,6 +92,19 @@ const App: React.FC = () => {
     initializeTimer();
   }, [patterns, initializeTimer]);
 
+  const playSound = useCallback(
+    (buffer: AudioBuffer | null) => {
+      if (!audioContext || !gainNode || !buffer) return;
+
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      source.start(0);
+    },
+    [audioContext, gainNode]
+  );
+
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
@@ -75,14 +115,14 @@ const App: React.FC = () => {
     } else if (isRunning && currentTime === 0) {
       // 時間切れ or カウントダウン終了
       if (timerMode === 'countdown') {
-        sounds.workEnd?.play(); // 開始のホイッスル
+        playSound(audioBuffers.workWhistle); // 開始のホイッスル
         const firstPattern = patterns[0];
         setCurrentPatternIndex(0);
         setCurrentCycle(1);
         setTimerMode('work');
         setCurrentTime(firstPattern.workTime);
       } else if (timerMode === 'work') {
-        sounds.workEnd?.play();
+        playSound(audioBuffers.workWhistle);
         // 最後のパターンかつ最後のセットであれば、休憩に入らずに終了
         if (
           currentPatternIndex === patterns.length - 1 &&
@@ -95,7 +135,7 @@ const App: React.FC = () => {
           setCurrentTime(activePattern.restTime);
         }
       } else if (timerMode === 'rest') {
-        sounds.restEnd?.play();
+        playSound(audioBuffers.restWhistle);
         if (currentCycle < activePattern.sets) {
           setCurrentCycle((prev) => prev + 1);
           setTimerMode('work');
@@ -120,10 +160,7 @@ const App: React.FC = () => {
         activePattern &&
         currentTime === Math.ceil(activePattern.workTime / 2)
       ) {
-        if (sounds.halfBeep) {
-          sounds.halfBeep.currentTime = 0;
-          sounds.halfBeep.play();
-        }
+        playSound(audioBuffers.halfBeep);
       }
 
       // カウントダウン音(3,2,1)と終了前ビープ音(5,4,3,2,1)
@@ -134,10 +171,7 @@ const App: React.FC = () => {
           currentTime >= 1 &&
           currentTime <= 5)
       ) {
-        if (sounds.beep) {
-          sounds.beep.currentTime = 0;
-          sounds.beep.play();
-        }
+        playSound(audioBuffers.beep);
       }
     }
 
@@ -152,11 +186,21 @@ const App: React.FC = () => {
     currentPatternIndex,
     currentCycle,
     activePattern,
-    sounds,
+    audioBuffers,
+    playSound,
   ]);
 
   const handleStartPause = () => {
     if (timerMode === 'finished' || patterns.length === 0) return;
+
+    if (!audioContext) {
+      const context = new window.AudioContext();
+      const gain = context.createGain();
+      gain.gain.value = 1.8;
+      setAudioContext(context);
+      setGainNode(gain);
+    }
+
     if (timerMode === 'idle' && patterns.length > 0) {
       setTimerMode('countdown');
       setCurrentTime(5);
