@@ -91,13 +91,9 @@ export const useTimer = ({ patterns, playSound, initAudio }: UseTimerProps) => {
         playSound('halfBeep');
       }
 
-      if (
-        (timerMode === 'countdown' && currentTime >= 1 && currentTime <= 3) ||
-        (timerMode !== 'countdown' &&
-          timerMode !== 'idle' &&
-          currentTime >= 1 &&
-          currentTime <= 5)
-      ) {
+      if (timerMode === 'rest' && currentTime >= 1 && currentTime <= 5) {
+        playSound('beep');
+      } else if (currentTime >= 1 && currentTime <= 3) {
         playSound('beep');
       }
     }
